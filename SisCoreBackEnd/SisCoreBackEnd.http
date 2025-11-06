@@ -1,0 +1,116 @@
+@TimeControlApi_HostAddress = http://localhost:5157
+@Tenant = siscore
+@Token = your_access_token_here
+
+### Login
+POST {{TimeControlApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+X-Tenant: {{Tenant}}
+
+{
+  "email": "usuario@ejemplo.com",
+  "password": "password123",
+  "deviceId": "device-123",
+  "deviceName": "Mi Dispositivo"
+}
+
+### Refresh Token
+POST {{TimeControlApi_HostAddress}}/api/auth/refresh
+Content-Type: application/json
+X-Tenant: {{Tenant}}
+
+{
+  "refreshToken": "your_refresh_token",
+  "deviceId": "device-123"
+}
+
+### Get Current User
+GET {{TimeControlApi_HostAddress}}/api/auth/me
+Authorization: Bearer {{Token}}
+X-Tenant: {{Tenant}}
+
+### Get All Users
+GET {{TimeControlApi_HostAddress}}/api/users
+Authorization: Bearer {{Token}}
+X-Tenant: {{Tenant}}
+
+### Get All Roles
+GET {{TimeControlApi_HostAddress}}/api/roles
+Authorization: Bearer {{Token}}
+X-Tenant: {{Tenant}}
+
+### Get All Modules
+GET {{TimeControlApi_HostAddress}}/api/modules
+Authorization: Bearer {{Token}}
+X-Tenant: {{Tenant}}
+
+### Generate Module with AI
+POST {{TimeControlApi_HostAddress}}/api/modules/generate
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+X-Tenant: {{Tenant}}
+
+{
+  "prompt": "Necesito un módulo para gestión de inventario con permisos de crear, leer, actualizar y eliminar productos",
+  "aiModel": "gpt-4o"
+}
+
+### Get Module Permissions
+GET {{TimeControlApi_HostAddress}}/api/modules/{moduleId}/permissions?includeInherited=true
+Authorization: Bearer {{Token}}
+X-Tenant: {{Tenant}}
+
+### Get My Permissions
+GET {{TimeControlApi_HostAddress}}/api/permissions/me
+Authorization: Bearer {{Token}}
+X-Tenant: {{Tenant}}
+
+### Assign Bulk Permissions
+POST {{TimeControlApi_HostAddress}}/api/permissions/assign-bulk
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+X-Tenant: {{Tenant}}
+
+{
+  "assignments": [
+    {
+      "modulePrivilegeId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "roleIds": ["role-1", "role-2"],
+      "userIds": [],
+      "validFrom": "2024-01-01T00:00:00Z",
+      "validTo": null
+    }
+  ]
+}
+
+### Generate Form with AI
+POST {{TimeControlApi_HostAddress}}/api/formbuilder/generate
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+X-Tenant: {{Tenant}}
+
+{
+  "prompt": "Necesito un formulario para registrar incidencias de seguridad laboral con fecha, ubicación, descripción, gravedad y notificación al supervisor",
+  "aiModel": "gpt-4o",
+  "versionNotes": "Versión inicial generada por AI",
+  "publish": false
+}
+
+### Get All Forms
+GET {{TimeControlApi_HostAddress}}/api/formbuilder?status=Draft
+Authorization: Bearer {{Token}}
+X-Tenant: {{Tenant}}
+
+### Publish Form
+POST {{TimeControlApi_HostAddress}}/api/formbuilder/{formId}/publish
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+X-Tenant: {{Tenant}}
+
+{
+  "versionId": "version-id",
+  "publicationType": "RoleBased",
+  "targetRoleIds": ["role-1", "role-2"],
+  "startDate": "2024-01-01T00:00:00Z",
+  "endDate": null
+}

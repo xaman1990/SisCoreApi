@@ -1089,6 +1089,757 @@
         }
       ],
       "description": "Endpoints de diagnóstico y utilidades"
+    },
+    {
+      "name": "Modules",
+      "item": [
+        {
+          "name": "Get All Modules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modules",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "modules"]
+            },
+            "description": "Obtener todos los módulos del sistema"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Module by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modules/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "modules", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Obtener módulo por ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Module",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"inventory\",\n  \"name\": \"Inventario\",\n  \"description\": \"Gestión de inventario\",\n  \"icon\": \"Box\",\n  \"menuOrder\": 7\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/modules",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "modules"]
+            },
+            "description": "Crear nuevo módulo"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Module with AI",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Necesito un módulo para gestión de inventario con permisos de crear, leer, actualizar y eliminar productos\",\n  \"aiModel\": \"gpt-4o\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/modules/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "modules", "generate"]
+            },
+            "description": "Generar módulo con IA desde lenguaje natural"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Module Permissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modules/:id/permissions?includeInherited=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "modules", ":id", "permissions"],
+              "query": [
+                {
+                  "key": "includeInherited",
+                  "value": "true",
+                  "description": "Incluir permisos heredados"
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": "Filtrar permisos efectivos para un usuario específico",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Obtener permisos de un módulo"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Module",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Inventario Actualizado\",\n  \"description\": \"Nueva descripción\",\n  \"isEnabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/modules/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "modules", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Actualizar módulo"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Module",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/modules/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "modules", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Eliminar módulo (soft delete)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints de gestión de módulos"
+    },
+    {
+      "name": "Permissions",
+      "item": [
+        {
+          "name": "Get My Permissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "permissions", "me"]
+            },
+            "description": "Obtener permisos efectivos del usuario actual"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Permissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions/user/:userId?includeInherited=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "permissions", "user", ":userId"],
+              "query": [
+                {
+                  "key": "includeInherited",
+                  "value": "true",
+                  "description": "Incluir permisos heredados"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Obtener permisos efectivos de un usuario específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Role Permissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions/role/:roleId?includeInherited=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "permissions", "role", ":roleId"],
+              "query": [
+                {
+                  "key": "includeInherited",
+                  "value": "true"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "roleId",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Obtener permisos de un rol"
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Bulk Permissions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assignments\": [\n    {\n      \"modulePrivilegeId\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n      \"roleIds\": [\"role-1\", \"role-2\"],\n      \"userIds\": [],\n      \"validFrom\": \"2024-01-01T00:00:00Z\",\n      \"validTo\": null\n    },\n    {\n      \"modulePrivilegeId\": \"b2c3d4e5-f6a7-8901-bcde-f12345678901\",\n      \"roleIds\": [],\n      \"userIds\": [\"user-1\"],\n      \"validFrom\": \"2024-01-01T00:00:00Z\",\n      \"validTo\": \"2024-12-31T23:59:59Z\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions/assign-bulk",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "permissions", "assign-bulk"]
+            },
+            "description": "Asignar permisos masivamente a roles o usuarios"
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke Permissions",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleId\": \"role-id\",\n  \"modulePrivilegeId\": \"privilege-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions/revoke",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "permissions", "revoke"]
+            },
+            "description": "Revocar permisos de un rol o usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "Check Permission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"moduleId\": \"module-id\",\n  \"action\": \"Create\",\n  \"scope\": \"OwnTenant\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions/check",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "permissions", "check"]
+            },
+            "description": "Verificar si un usuario tiene un permiso específico"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints de gestión de permisos"
+    },
+    {
+      "name": "Form Builder",
+      "item": [
+        {
+          "name": "Generate Form with AI",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Necesito un formulario para registrar incidencias de seguridad laboral con fecha, ubicación, descripción, gravedad y notificación al supervisor\",\n  \"aiModel\": \"gpt-4o\",\n  \"versionNotes\": \"Versión inicial generada por AI\",\n  \"publish\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder", "generate"]
+            },
+            "description": "Generar formulario desde lenguaje natural usando IA"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Forms",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder?status=Draft",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Draft",
+                  "description": "Filtrar por estado (Draft, Published, Archived)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Obtener todos los formularios"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Form by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Obtener formulario por ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"incidencias-seguridad\",\n  \"name\": \"Registro de Incidencias de Seguridad\",\n  \"description\": \"Formulario para registrar incidencias\",\n  \"schemaJson\": \"{}\",\n  \"uiSchemaJson\": \"{}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder"]
+            },
+            "description": "Crear formulario manualmente"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Form",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Formulario Actualizado\",\n  \"description\": \"Nueva descripción\",\n  \"schemaJson\": \"{}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Actualizar formulario"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Form",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Eliminar formulario (soft delete)"
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"versionId\": \"version-id\",\n  \"publicationType\": \"RoleBased\",\n  \"targetRoleIds\": [\"role-1\", \"role-2\"],\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder/:id/publish",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder", ":id", "publish"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Publicar formulario"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Form Versions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder/:id/versions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder", ":id", "versions"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Obtener versiones de un formulario"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Form Version",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"versionNumber\": \"1.1.0\",\n  \"schemaJson\": \"{}\",\n  \"uiSchemaJson\": \"{}\",\n  \"changeNotes\": \"Agregado campo de ubicación\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder/:id/versions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder", ":id", "versions"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Crear nueva versión de un formulario"
+          },
+          "response": []
+        },
+        {
+          "name": "Rollback Form Version",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Tenant",
+                "value": "{{tenant}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/formbuilder/:id/rollback/:versionId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "formbuilder", ":id", "rollback", ":versionId"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                  "key": "versionId",
+                  "value": "00000000-0000-0000-0000-000000000000"
+                }
+              ]
+            },
+            "description": "Hacer rollback a una versión anterior"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints de Form Builder con IA"
     }
   ],
   "variable": [
