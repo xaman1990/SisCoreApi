@@ -1,4 +1,4 @@
-namespace TimeControlApi.Domain.Tenant.FormBuilder
+namespace SisCoreBackEnd.Domain.Tenant.FormBuilder
 {
     /// <summary>
     /// Reglas de negocio para formularios (validaciones, cálculos, acciones)

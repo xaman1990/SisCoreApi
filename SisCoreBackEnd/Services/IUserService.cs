@@ -1,6 +1,6 @@
-using TimeControlApi.Domain.Tenant;
+using SisCoreBackEnd.Domain.Tenant;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public interface IUserService
     {

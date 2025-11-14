@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TimeControlApi.Data;
-using TimeControlApi.Services;
-using TimeControlApi.Tenancy;
+using SisCoreBackEnd.Data;
+using SisCoreBackEnd.Services;
+using SisCoreBackEnd.Tenancy;
 
-namespace TimeControlApi.Controllers
+namespace SisCoreBackEnd.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

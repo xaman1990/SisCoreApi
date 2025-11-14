@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "TimeControlApi": {
+    "SisCoreBackEnd": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

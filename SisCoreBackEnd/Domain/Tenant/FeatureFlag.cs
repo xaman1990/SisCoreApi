@@ -1,4 +1,4 @@
-namespace TimeControlApi.Domain.Tenant
+namespace SisCoreBackEnd.Domain.Tenant
 {
     /// <summary>
     /// Feature flags por tenant para control de funcionalidades

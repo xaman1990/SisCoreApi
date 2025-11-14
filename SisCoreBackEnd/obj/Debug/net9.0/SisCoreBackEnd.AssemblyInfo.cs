@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SisCoreBackEnd")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26560d801a5a79aa8c3ea4c07a6fc341a0895b58")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8aaf5ccc327379fcfe6adc4b97d5c7c8fc21ec31")]
 [assembly: System.Reflection.AssemblyProductAttribute("SisCoreBackEnd")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SisCoreBackEnd")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,4 @@
-namespace TimeControlApi.DTOs.Companies
+namespace SisCoreBackEnd.DTOs.Companies
 {
     public class CreateCompanyRequest
     {

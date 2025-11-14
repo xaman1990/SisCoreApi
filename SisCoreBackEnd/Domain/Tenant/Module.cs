@@ -1,4 +1,4 @@
-namespace TimeControlApi.Domain.Tenant
+namespace SisCoreBackEnd.Domain.Tenant
 {
     public class Module
     {
@@ -14,7 +14,8 @@ namespace TimeControlApi.Domain.Tenant
         public DateTime? UpdatedAt { get; set; }
 
         // Navigation properties
-        public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
+        public virtual ICollection<SubModule> SubModules { get; set; } = new List<SubModule>();
+        public virtual ICollection<ModulePrivilege> ModulePrivileges { get; set; } = new List<ModulePrivilege>();
     }
 }
 

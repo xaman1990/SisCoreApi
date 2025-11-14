@@ -1,4 +1,4 @@
-namespace TimeControlApi.DTOs.MasterUsers
+namespace SisCoreBackEnd.DTOs.MasterUsers
 {
     public class AssignCompanyToMasterUserRequest
     {

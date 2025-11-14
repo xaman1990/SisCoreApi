@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using TimeControlApi.Data;
-using TimeControlApi.Services;
-using TimeControlApi.Tenancy;
+using SisCoreBackEnd.Data;
+using SisCoreBackEnd.Services;
+using SisCoreBackEnd.Tenancy;
+using SisCoreBackEnd.Swagger.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +46,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IMasterUserService, MasterUserService>();
+builder.Services.AddScoped<IModuleService, ModuleService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 // HttpContextAccessor para servicios
 builder.Services.AddHttpContextAccessor();
@@ -110,7 +114,11 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+
+    c.OperationFilter<RequestResponseExamplesOperationFilter>();
+    c.ExampleFilters();
 });
+builder.Services.AddSwaggerExamplesFromAssemblyOf<RequestResponseExamplesOperationFilter>();
 builder.WebHost.UseUrls("http://0.0.0.0:7004");
 var app = builder.Build();
 

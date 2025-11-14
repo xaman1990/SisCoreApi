@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+Each time a driver file is added, modified, or deleted, or a response DTO is modified, the postman_collection.json file must be updated.
+Keep the README.md file updated with any modifications made to the solution.

@@ -1,20 +1,19 @@
-namespace TimeControlApi.Domain.Tenant
+namespace SisCoreBackEnd.Domain.Tenant
 {
     /// <summary>
     /// Grupos de permisos para asignación masiva (ej: "Editor Completo", "Solo Lectura")
     /// </summary>
     public class PermissionGroup
     {
-        public Guid TenantId { get; set; }
-        public Guid PermissionGroupId { get; set; }
+        public int Id { get; set; }
         public string Code { get; set; } = default!; // UNIQUE por tenant
         public string Name { get; set; } = default!;
         public string? Description { get; set; }
         public bool IsSystem { get; set; } = false; // Grupos del sistema
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-        public Guid CreatedBy { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
-        public Guid? UpdatedBy { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int? CreatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int? UpdatedBy { get; set; }
         public bool IsDeleted { get; set; } = false;
 
         // Navigation properties
@@ -26,11 +25,10 @@ namespace TimeControlApi.Domain.Tenant
     /// </summary>
     public class PermissionGroupAssignment
     {
-        public Guid TenantId { get; set; }
-        public Guid PermissionGroupId { get; set; }
-        public Guid ModulePrivilegeId { get; set; }
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-        public Guid CreatedBy { get; set; }
+        public int PermissionGroupId { get; set; }
+        public int ModulePrivilegeId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int? CreatedBy { get; set; }
 
         // Navigation properties
         public virtual PermissionGroup PermissionGroup { get; set; } = null!;

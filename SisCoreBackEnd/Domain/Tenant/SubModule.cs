@@ -1,22 +1,21 @@
-namespace TimeControlApi.Domain.Tenant
+namespace SisCoreBackEnd.Domain.Tenant
 {
     /// <summary>
     /// Submódulos dentro de un módulo (opcional, para organización jerárquica)
     /// </summary>
     public class SubModule
     {
-        public Guid TenantId { get; set; }
-        public Guid SubModuleId { get; set; }
-        public Guid ModuleId { get; set; }
+        public int Id { get; set; }
+        public int ModuleId { get; set; }
         public string Code { get; set; } = default!; // UNIQUE por módulo
         public string Name { get; set; } = default!;
         public string? Description { get; set; }
         public int MenuOrder { get; set; } = 0;
         public bool IsEnabled { get; set; } = true;
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-        public Guid CreatedBy { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
-        public Guid? UpdatedBy { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int? CreatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int? UpdatedBy { get; set; }
         public bool IsDeleted { get; set; } = false;
 
         // Navigation properties

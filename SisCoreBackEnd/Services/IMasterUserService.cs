@@ -1,6 +1,6 @@
-using TimeControlApi.DTOs.MasterUsers;
+using SisCoreBackEnd.DTOs.MasterUsers;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public interface IMasterUserService
     {

@@ -1,7 +1,7 @@
-using TimeControlApi.DTOs.Auth;
-using TimeControlApi.Domain.Tenant;
+using SisCoreBackEnd.DTOs.Auth;
+using SisCoreBackEnd.Domain.Tenant;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public interface IAuthService
     {

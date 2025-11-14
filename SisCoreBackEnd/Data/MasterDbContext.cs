@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TimeControlApi.Domain.Master;
+using SisCoreBackEnd.Domain.Master;
 
-namespace TimeControlApi.Data
+namespace SisCoreBackEnd.Data
 {
     public class MasterDbContext : DbContext
     {

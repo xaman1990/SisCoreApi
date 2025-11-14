@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\SisCoreBackEnd.csproj": {}
+    "\\\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\SisCoreBackEnd.csproj": {}
   },
   "projects": {
-    "C:\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\SisCoreBackEnd.csproj": {
+    "\\\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\SisCoreBackEnd.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\SisCoreBackEnd.csproj",
+        "projectUniqueName": "\\\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\SisCoreBackEnd.csproj",
         "projectName": "SisCoreBackEnd",
-        "projectPath": "C:\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\SisCoreBackEnd.csproj",
+        "projectPath": "\\\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\SisCoreBackEnd.csproj",
         "packagesPath": "C:\\Users\\xmn\\.nuget\\packages\\",
-        "outputPath": "C:\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\obj\\",
+        "outputPath": "\\\\Mac\\Home\\Documents\\Trabajo\\Base\\SisCoreBackEnd\\SisCoreBackEnd\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -64,6 +64,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"
+            },
+            "Swashbuckle.AspNetCore.Filters": {
+              "target": "Package",
+              "version": "[7.0.5, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",

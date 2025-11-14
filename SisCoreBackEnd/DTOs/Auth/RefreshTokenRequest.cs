@@ -1,4 +1,4 @@
-namespace TimeControlApi.DTOs.Auth
+namespace SisCoreBackEnd.DTOs.Auth
 {
     public class RefreshTokenRequest
     {

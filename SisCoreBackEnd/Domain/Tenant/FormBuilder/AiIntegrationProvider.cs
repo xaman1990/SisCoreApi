@@ -1,4 +1,4 @@
-namespace TimeControlApi.Domain.Tenant.FormBuilder
+namespace SisCoreBackEnd.Domain.Tenant.FormBuilder
 {
     /// <summary>
     /// Configuración de proveedores de IA (OpenAI, Azure OpenAI, etc.)

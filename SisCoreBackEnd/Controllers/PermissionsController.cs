@@ -1,143 +1,98 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TimeControlApi.Services;
+using SisCoreBackEnd.DTOs.Permissions;
+using SisCoreBackEnd.Services;
 
-namespace TimeControlApi.Controllers
+namespace SisCoreBackEnd.Controllers
 {
     /// <summary>
-    /// Controlador para gestión de permisos
+    /// API para gestión de permisos y privilegios por módulo/rol.
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
     public class PermissionsController : ControllerBase
     {
+        private readonly IPermissionService _permissionService;
         private readonly ILogger<PermissionsController> _logger;
 
-        public PermissionsController(ILogger<PermissionsController> logger)
+        public PermissionsController(IPermissionService permissionService, ILogger<PermissionsController> logger)
         {
+            _permissionService = permissionService;
             _logger = logger;
         }
 
-        /// <summary>
-        /// Obtener permisos efectivos del usuario actual
-        /// </summary>
+        private int? GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+            {
+                return null;
+            }
+
+            return userId;
+        }
+
+        #region Effective permissions
+
         [HttpGet("me")]
         public async Task<IActionResult> GetMyPermissions()
         {
             try
             {
-                var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? Guid.Empty.ToString());
-                
-                // TODO: Implementar servicio de permisos
-                return Ok(new { message = "En desarrollo", userId });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al obtener permisos del usuario");
-                return StatusCode(500, new { message = "Error interno del servidor" });
-            }
-        }
-
-        /// <summary>
-        /// Obtener permisos efectivos de un usuario específico
-        /// </summary>
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserPermissions(Guid userId, [FromQuery] bool includeInherited = true)
-        {
-            try
-            {
-                // TODO: Implementar servicio de permisos
-                return Ok(new { message = "En desarrollo", userId, includeInherited });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al obtener permisos del usuario");
-                return StatusCode(500, new { message = "Error interno del servidor" });
-            }
-        }
-
-        /// <summary>
-        /// Obtener permisos de un rol
-        /// </summary>
-        [HttpGet("role/{roleId}")]
-        public async Task<IActionResult> GetRolePermissions(Guid roleId, [FromQuery] bool includeInherited = true)
-        {
-            try
-            {
-                // TODO: Implementar servicio de permisos
-                return Ok(new { message = "En desarrollo", roleId, includeInherited });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al obtener permisos del rol");
-                return StatusCode(500, new { message = "Error interno del servidor" });
-            }
-        }
-
-        /// <summary>
-        /// Asignar permisos masivamente a roles o usuarios
-        /// </summary>
-        [HttpPost("assign-bulk")]
-        public async Task<IActionResult> AssignBulkPermissions([FromBody] BulkPermissionAssignmentRequest request)
-        {
-            try
-            {
-                if (request.Assignments == null || !request.Assignments.Any())
+                var userId = GetCurrentUserId();
+                if (!userId.HasValue)
                 {
-                    return BadRequest(new { message = "Debe proporcionar al menos una asignación" });
+                    return Unauthorized(new { message = "Usuario no identificado" });
                 }
 
-                var currentUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? Guid.Empty.ToString());
-                
-                // TODO: Implementar servicio de permisos
-                return Ok(new { 
-                    message = "En desarrollo", 
-                    assignedCount = 0, 
-                    failedAssignments = new List<object>() 
-                });
+                var permissions = await _permissionService.GetMyPermissionsAsync(userId.Value);
+                return Ok(permissions);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al asignar permisos masivamente");
+                _logger.LogError(ex, "Error al obtener permisos del usuario actual");
                 return StatusCode(500, new { message = "Error interno del servidor" });
             }
         }
 
-        /// <summary>
-        /// Revocar permisos de un rol o usuario
-        /// </summary>
-        [HttpDelete("revoke")]
-        public async Task<IActionResult> RevokePermissions([FromBody] RevokePermissionRequest request)
+        [HttpGet("user/{userId:int}")]
+        public async Task<IActionResult> GetUserPermissions(int userId)
         {
             try
             {
-                // TODO: Implementar servicio de permisos
-                return Ok(new { message = "Permisos revocados exitosamente" });
+                var response = await _permissionService.GetUserPermissionsAsync(userId, includeInherited: true);
+                return Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al revocar permisos");
+                _logger.LogError(ex, "Error al obtener permisos del usuario");
                 return StatusCode(500, new { message = "Error interno del servidor" });
             }
         }
 
-        /// <summary>
-        /// Verificar si un usuario tiene un permiso específico
-        /// </summary>
         [HttpPost("check")]
         public async Task<IActionResult> CheckPermission([FromBody] CheckPermissionRequest request)
         {
             try
             {
-                var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? Guid.Empty.ToString());
-                
-                // TODO: Implementar servicio de permisos
-                return Ok(new { 
-                    hasPermission = false, 
-                    message = "En desarrollo" 
-                });
+                var userId = request.UserId ?? GetCurrentUserId();
+                if (!userId.HasValue)
+                {
+                    return BadRequest(new { message = "Debe proporcionar UserId o estar autenticado" });
+                }
+
+                var result = await _permissionService.CheckPermissionAsync(userId.Value, request.ModuleId, request.PermissionCode);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -145,35 +100,303 @@ namespace TimeControlApi.Controllers
                 return StatusCode(500, new { message = "Error interno del servidor" });
             }
         }
-    }
 
-    public class BulkPermissionAssignmentRequest
-    {
-        public List<PermissionAssignmentDto> Assignments { get; set; } = new();
-    }
+        #endregion
 
-    public class PermissionAssignmentDto
-    {
-        public Guid ModulePrivilegeId { get; set; }
-        public List<Guid>? RoleIds { get; set; }
-        public List<Guid>? UserIds { get; set; }
-        public DateTimeOffset? ValidFrom { get; set; }
-        public DateTimeOffset? ValidTo { get; set; }
-    }
+        #region Permission catalog
 
-    public class RevokePermissionRequest
-    {
-        public Guid? RoleId { get; set; }
-        public Guid? UserId { get; set; }
-        public Guid ModulePrivilegeId { get; set; }
-    }
+        [HttpGet("catalog")]
+        public async Task<IActionResult> GetPermissionCatalog([FromQuery] PermissionCatalogFilter filter)
+        {
+            try
+            {
+                var result = await _permissionService.GetPermissionCatalogAsync(filter);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener catálogo de permisos");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
 
-    public class CheckPermissionRequest
-    {
-        public Guid? UserId { get; set; }
-        public Guid ModuleId { get; set; }
-        public string Action { get; set; } = default!;
-        public string? Scope { get; set; }
+        [HttpGet("catalog/{id:int}")]
+        public async Task<IActionResult> GetPermissionCatalogById(int id)
+        {
+            try
+            {
+                var permission = await _permissionService.GetPermissionCatalogByIdAsync(id);
+                if (permission == null)
+                    return NotFound(new { message = "Permiso no encontrado" });
+
+                return Ok(permission);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener permiso del catálogo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPost("catalog")]
+        public async Task<IActionResult> CreatePermissionCatalog([FromBody] CreatePermissionRequest request)
+        {
+            try
+            {
+                var createdBy = GetCurrentUserId() ?? 0;
+                var result = await _permissionService.CreatePermissionAsync(request, createdBy);
+                return CreatedAtAction(nameof(GetPermissionCatalogById), new { id = result.Id }, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al crear permiso de catálogo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPut("catalog/{id:int}")]
+        public async Task<IActionResult> UpdatePermissionCatalog(int id, [FromBody] UpdatePermissionRequest request)
+        {
+            try
+            {
+                var updatedBy = GetCurrentUserId() ?? 0;
+                var result = await _permissionService.UpdatePermissionAsync(id, request, updatedBy);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al actualizar permiso de catálogo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpDelete("catalog/{id:int}")]
+        public async Task<IActionResult> DeletePermissionCatalog(int id)
+        {
+            try
+            {
+                var deletedBy = GetCurrentUserId();
+                var result = await _permissionService.DeletePermissionAsync(id, deletedBy);
+                if (!result)
+                    return NotFound(new { message = "Permiso no encontrado" });
+
+                return Ok(new { message = "Permiso eliminado exitosamente" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al eliminar permiso de catálogo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        #endregion
+
+        #region Module privileges
+
+        [HttpGet("modules/{moduleId:int}/privileges")]
+        public async Task<IActionResult> GetModulePrivileges(int moduleId, [FromQuery] ModulePrivilegeFilter filter)
+        {
+            try
+            {
+                filter ??= new ModulePrivilegeFilter();
+                filter.ModuleId = moduleId;
+                var privileges = await _permissionService.GetModulePrivilegesAsync(moduleId, filter);
+                return Ok(privileges);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener privilegios del módulo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpGet("modules/{moduleId:int}/privileges/{privilegeId:int}")]
+        public async Task<IActionResult> GetModulePrivilege(int moduleId, int privilegeId)
+        {
+            try
+            {
+                var privilege = await _permissionService.GetModulePrivilegeByIdAsync(privilegeId);
+                if (privilege == null || privilege.ModuleId != moduleId)
+                    return NotFound(new { message = "Privilegio no encontrado" });
+
+                return Ok(privilege);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener privilegio del módulo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPost("modules/{moduleId:int}/privileges")]
+        public async Task<IActionResult> CreateModulePrivilege(int moduleId, [FromBody] CreateModulePrivilegeRequest request)
+        {
+            try
+            {
+                var createdBy = GetCurrentUserId() ?? 0;
+                var privilege = await _permissionService.CreateModulePrivilegeAsync(moduleId, request, createdBy);
+                return CreatedAtAction(nameof(GetModulePrivilege), new { moduleId, privilegeId = privilege.Id }, privilege);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al crear privilegio de módulo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPut("modules/{moduleId:int}/privileges/{privilegeId:int}")]
+        public async Task<IActionResult> UpdateModulePrivilege(int moduleId, int privilegeId, [FromBody] UpdateModulePrivilegeRequest request)
+        {
+            try
+            {
+                var updatedBy = GetCurrentUserId() ?? 0;
+                var privilege = await _permissionService.UpdateModulePrivilegeAsync(privilegeId, request, updatedBy);
+                if (privilege.ModuleId != moduleId)
+                    return BadRequest(new { message = "El privilegio no pertenece al módulo indicado" });
+
+                return Ok(privilege);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al actualizar privilegio de módulo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpDelete("modules/{moduleId:int}/privileges/{privilegeId:int}")]
+        public async Task<IActionResult> DeleteModulePrivilege(int moduleId, int privilegeId)
+        {
+            try
+            {
+                var updatedBy = GetCurrentUserId();
+                var result = await _permissionService.DeleteModulePrivilegeAsync(privilegeId, updatedBy);
+                if (!result)
+                    return NotFound(new { message = "Privilegio no encontrado" });
+
+                return Ok(new { message = "Privilegio eliminado exitosamente" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al eliminar privilegio de módulo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPost("modules/{moduleId:int}/privileges/{privilegeId:int}/restore")]
+        public async Task<IActionResult> RestoreModulePrivilege(int moduleId, int privilegeId)
+        {
+            try
+            {
+                var updatedBy = GetCurrentUserId();
+                var result = await _permissionService.RestoreModulePrivilegeAsync(privilegeId, updatedBy);
+                if (!result)
+                    return NotFound(new { message = "Privilegio no encontrado" });
+
+                return Ok(new { message = "Privilegio restaurado exitosamente" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al restaurar privilegio de módulo");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPost("modules/{moduleId:int}/privileges/defaults")]
+        public async Task<IActionResult> EnsureDefaultPrivileges(int moduleId)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                await _permissionService.EnsureDefaultModulePrivilegesAsync(moduleId, userId);
+                return Ok(new { message = "Privilegios por defecto sincronizados" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al sincronizar privilegios por defecto");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        #endregion
+
+        #region Role permissions
+
+        [HttpGet("roles/{roleId:int}/modules")]
+        public async Task<IActionResult> GetRoleModulePermissions(int roleId, [FromQuery] int? moduleId)
+        {
+            try
+            {
+                var result = await _permissionService.GetRolePermissionsMatrixAsync(roleId, moduleId);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener matriz de permisos del rol");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPut("roles/{roleId:int}/modules")]
+        public async Task<IActionResult> UpdateRoleModulePermissions(int roleId, [FromBody] UpdateRoleModulePermissionsRequest request)
+        {
+            try
+            {
+                var updatedBy = GetCurrentUserId() ?? 0;
+                await _permissionService.UpdateRoleModulePermissionsAsync(roleId, request, updatedBy);
+                return Ok(new { message = "Permisos actualizados correctamente" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al actualizar permisos del rol");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        #endregion
     }
 }
 

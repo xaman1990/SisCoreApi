@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using TimeControlApi.Data;
-using TimeControlApi.DTOs.Auth;
-using TimeControlApi.Domain.Tenant;
-using TimeControlApi.Tenancy;
+using SisCoreBackEnd.Data;
+using SisCoreBackEnd.DTOs.Auth;
+using SisCoreBackEnd.Domain.Tenant;
+using SisCoreBackEnd.Tenancy;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public class AuthService : IAuthService
     {

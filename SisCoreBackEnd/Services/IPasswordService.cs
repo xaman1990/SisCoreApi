@@ -1,4 +1,4 @@
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public interface IPasswordService
     {

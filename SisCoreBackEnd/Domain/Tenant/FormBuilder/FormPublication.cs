@@ -1,4 +1,4 @@
-namespace TimeControlApi.Domain.Tenant.FormBuilder
+namespace SisCoreBackEnd.Domain.Tenant.FormBuilder
 {
     /// <summary>
     /// Publicación de formularios (control de acceso y rollout)

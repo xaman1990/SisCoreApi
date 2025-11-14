@@ -2,7 +2,7 @@ using Konscious.Security.Cryptography;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public class PasswordService : IPasswordService
     {

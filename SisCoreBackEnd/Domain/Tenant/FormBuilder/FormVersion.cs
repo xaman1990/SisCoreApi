@@ -1,4 +1,4 @@
-namespace TimeControlApi.Domain.Tenant.FormBuilder
+namespace SisCoreBackEnd.Domain.Tenant.FormBuilder
 {
     /// <summary>
     /// Versiones de formularios para control de cambios y rollback

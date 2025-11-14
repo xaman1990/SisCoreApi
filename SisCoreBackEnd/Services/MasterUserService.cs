@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using TimeControlApi.Data;
-using TimeControlApi.Domain.Master;
-using TimeControlApi.DTOs.MasterUsers;
-using TimeControlApi.Tenancy;
+using SisCoreBackEnd.Data;
+using SisCoreBackEnd.Domain.Master;
+using SisCoreBackEnd.DTOs.MasterUsers;
+using SisCoreBackEnd.Tenancy;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public class MasterUserService : IMasterUserService
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TimeControlApi.Data;
+using SisCoreBackEnd.Data;
 
-namespace TimeControlApi.Tenancy
+namespace SisCoreBackEnd.Tenancy
 {
     public class TenantDbContextFactory
     {

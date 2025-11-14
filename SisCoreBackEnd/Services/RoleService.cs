@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using TimeControlApi.Data;
-using TimeControlApi.DTOs.Roles;
-using TimeControlApi.Domain.Tenant;
-using TimeControlApi.Tenancy;
+using SisCoreBackEnd.Data;
+using SisCoreBackEnd.DTOs.Roles;
+using SisCoreBackEnd.Domain.Tenant;
+using SisCoreBackEnd.Tenancy;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public class RoleService : IRoleService
     {
@@ -51,9 +51,6 @@ namespace TimeControlApi.Services
             }
             
             var roles = await db.Roles
-                .Include(r => r.RolePermissions)
-                    .ThenInclude(rp => rp.Permission)
-                        .ThenInclude(p => p.Module)
                 .Where(r => r.Status == 1)
                 .ToListAsync();
 
@@ -71,13 +68,7 @@ namespace TimeControlApi.Services
                 Description = r.Description,
                 IsSystem = r.IsSystem,
                 Status = r.Status,
-                Permissions = r.RolePermissions.Select(rp => new PermissionInfo
-                {
-                    Id = rp.Permission.Id,
-                    Code = rp.Permission.Code,
-                    Name = rp.Permission.Name,
-                    ModuleCode = rp.Permission.Module.Code
-                }).ToList()
+                Permissions = new List<PermissionInfo>()
             }).ToList();
         }
 
@@ -85,9 +76,6 @@ namespace TimeControlApi.Services
         {
             using var db = GetDbContext();
             var role = await db.Roles
-                .Include(r => r.RolePermissions)
-                    .ThenInclude(rp => rp.Permission)
-                        .ThenInclude(p => p.Module)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (role == null)
@@ -100,13 +88,7 @@ namespace TimeControlApi.Services
                 Description = role.Description,
                 IsSystem = role.IsSystem,
                 Status = role.Status,
-                Permissions = role.RolePermissions.Select(rp => new PermissionInfo
-                {
-                    Id = rp.Permission.Id,
-                    Code = rp.Permission.Code,
-                    Name = rp.Permission.Name,
-                    ModuleCode = rp.Permission.Module.Code
-                }).ToList()
+                Permissions = new List<PermissionInfo>()
             };
         }
 
@@ -130,26 +112,6 @@ namespace TimeControlApi.Services
             db.Roles.Add(role);
             await db.SaveChangesAsync();
 
-            // Asignar permisos
-            if (request.PermissionIds.Any())
-            {
-                var permissions = await db.Permissions
-                    .Where(p => request.PermissionIds.Contains(p.Id))
-                    .ToListAsync();
-
-                foreach (var permission in permissions)
-                {
-                    db.RolePermissions.Add(new RolePermission
-                    {
-                        RoleId = role.Id,
-                        PermissionId = permission.Id,
-                        GrantedBy = createdBy
-                    });
-                }
-
-                await db.SaveChangesAsync();
-            }
-
             return role;
         }
 
@@ -157,7 +119,6 @@ namespace TimeControlApi.Services
         {
             using var db = GetDbContext();
             var role = await db.Roles
-                .Include(r => r.RolePermissions)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (role == null)
@@ -176,27 +137,6 @@ namespace TimeControlApi.Services
 
             if (description != null)
                 role.Description = description;
-
-            // Actualizar permisos si se proporcionan
-            if (permissionIds != null)
-            {
-                // Eliminar permisos actuales
-                db.RolePermissions.RemoveRange(role.RolePermissions);
-
-                // Agregar nuevos permisos
-                var permissions = await db.Permissions
-                    .Where(p => permissionIds.Contains(p.Id))
-                    .ToListAsync();
-
-                foreach (var permission in permissions)
-                {
-                    db.RolePermissions.Add(new RolePermission
-                    {
-                        RoleId = role.Id,
-                        PermissionId = permission.Id
-                    });
-                }
-            }
 
             await db.SaveChangesAsync();
             return role;

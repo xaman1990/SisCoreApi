@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TimeControlApi.Services;
+using SisCoreBackEnd.Services;
 
-namespace TimeControlApi.Controllers
+namespace SisCoreBackEnd.Controllers
 {
     /// <summary>
     /// Controlador para Form Builder con IA

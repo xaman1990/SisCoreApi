@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TimeControlApi.Data;
-using TimeControlApi.Domain.Master;
+using SisCoreBackEnd.Data;
+using SisCoreBackEnd.Domain.Master;
 
-namespace TimeControlApi.Tenancy
+namespace SisCoreBackEnd.Tenancy
 {
     public class TenantResolver : ITenantResolver
     {

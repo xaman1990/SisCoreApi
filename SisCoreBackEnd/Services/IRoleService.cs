@@ -1,7 +1,7 @@
-using TimeControlApi.DTOs.Roles;
-using TimeControlApi.Domain.Tenant;
+using SisCoreBackEnd.DTOs.Roles;
+using SisCoreBackEnd.Domain.Tenant;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public interface IRoleService
     {

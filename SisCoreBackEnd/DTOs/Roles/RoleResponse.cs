@@ -1,4 +1,4 @@
-namespace TimeControlApi.DTOs.Roles
+namespace SisCoreBackEnd.DTOs.Roles
 {
     public class RoleResponse
     {

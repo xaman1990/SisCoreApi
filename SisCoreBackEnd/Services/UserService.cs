@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using TimeControlApi.Data;
-using TimeControlApi.Domain.Tenant;
-using TimeControlApi.Tenancy;
+using SisCoreBackEnd.Data;
+using SisCoreBackEnd.Domain.Tenant;
+using SisCoreBackEnd.Tenancy;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public class UserService : IUserService
     {

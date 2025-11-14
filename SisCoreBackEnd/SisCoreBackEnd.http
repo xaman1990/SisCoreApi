@@ -1,9 +1,9 @@
-@TimeControlApi_HostAddress = http://localhost:5157
+@SisCoreBackEnd_HostAddress = http://localhost:5157
 @Tenant = siscore
 @Token = your_access_token_here
 
 ### Login
-POST {{TimeControlApi_HostAddress}}/api/auth/login
+POST {{SisCoreBackEnd_HostAddress}}/api/auth/login
 Content-Type: application/json
 X-Tenant: {{Tenant}}
 
@@ -15,7 +15,7 @@ X-Tenant: {{Tenant}}
 }
 
 ### Refresh Token
-POST {{TimeControlApi_HostAddress}}/api/auth/refresh
+POST {{SisCoreBackEnd_HostAddress}}/api/auth/refresh
 Content-Type: application/json
 X-Tenant: {{Tenant}}
 
@@ -25,27 +25,27 @@ X-Tenant: {{Tenant}}
 }
 
 ### Get Current User
-GET {{TimeControlApi_HostAddress}}/api/auth/me
+GET {{SisCoreBackEnd_HostAddress}}/api/auth/me
 Authorization: Bearer {{Token}}
 X-Tenant: {{Tenant}}
 
 ### Get All Users
-GET {{TimeControlApi_HostAddress}}/api/users
+GET {{SisCoreBackEnd_HostAddress}}/api/users
 Authorization: Bearer {{Token}}
 X-Tenant: {{Tenant}}
 
 ### Get All Roles
-GET {{TimeControlApi_HostAddress}}/api/roles
+GET {{SisCoreBackEnd_HostAddress}}/api/roles
 Authorization: Bearer {{Token}}
 X-Tenant: {{Tenant}}
 
 ### Get All Modules
-GET {{TimeControlApi_HostAddress}}/api/modules
+GET {{SisCoreBackEnd_HostAddress}}/api/modules
 Authorization: Bearer {{Token}}
 X-Tenant: {{Tenant}}
 
 ### Generate Module with AI
-POST {{TimeControlApi_HostAddress}}/api/modules/generate
+POST {{SisCoreBackEnd_HostAddress}}/api/modules/generate
 Authorization: Bearer {{Token}}
 Content-Type: application/json
 X-Tenant: {{Tenant}}
@@ -56,17 +56,17 @@ X-Tenant: {{Tenant}}
 }
 
 ### Get Module Permissions
-GET {{TimeControlApi_HostAddress}}/api/modules/{moduleId}/permissions?includeInherited=true
+GET {{SisCoreBackEnd_HostAddress}}/api/modules/{moduleId}/permissions?includeInherited=true
 Authorization: Bearer {{Token}}
 X-Tenant: {{Tenant}}
 
 ### Get My Permissions
-GET {{TimeControlApi_HostAddress}}/api/permissions/me
+GET {{SisCoreBackEnd_HostAddress}}/api/permissions/me
 Authorization: Bearer {{Token}}
 X-Tenant: {{Tenant}}
 
 ### Assign Bulk Permissions
-POST {{TimeControlApi_HostAddress}}/api/permissions/assign-bulk
+POST {{SisCoreBackEnd_HostAddress}}/api/permissions/assign-bulk
 Authorization: Bearer {{Token}}
 Content-Type: application/json
 X-Tenant: {{Tenant}}
@@ -84,7 +84,7 @@ X-Tenant: {{Tenant}}
 }
 
 ### Generate Form with AI
-POST {{TimeControlApi_HostAddress}}/api/formbuilder/generate
+POST {{SisCoreBackEnd_HostAddress}}/api/formbuilder/generate
 Authorization: Bearer {{Token}}
 Content-Type: application/json
 X-Tenant: {{Tenant}}
@@ -97,12 +97,12 @@ X-Tenant: {{Tenant}}
 }
 
 ### Get All Forms
-GET {{TimeControlApi_HostAddress}}/api/formbuilder?status=Draft
+GET {{SisCoreBackEnd_HostAddress}}/api/formbuilder?status=Draft
 Authorization: Bearer {{Token}}
 X-Tenant: {{Tenant}}
 
 ### Publish Form
-POST {{TimeControlApi_HostAddress}}/api/formbuilder/{formId}/publish
+POST {{SisCoreBackEnd_HostAddress}}/api/formbuilder/{formId}/publish
 Authorization: Bearer {{Token}}
 Content-Type: application/json
 X-Tenant: {{Tenant}}

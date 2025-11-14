@@ -1,4 +1,4 @@
-﻿namespace TimeControlApi.Domain.Tenant
+﻿namespace SisCoreBackEnd.Domain.Tenant
 {
     public class User
     {

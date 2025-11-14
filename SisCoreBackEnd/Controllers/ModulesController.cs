@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TimeControlApi.Services;
+using SisCoreBackEnd.Services;
+using SisCoreBackEnd.DTOs.Modules;
 
-namespace TimeControlApi.Controllers
+namespace SisCoreBackEnd.Controllers
 {
     /// <summary>
     /// Controlador para gestión de módulos del sistema
@@ -13,10 +14,14 @@ namespace TimeControlApi.Controllers
     [Authorize]
     public class ModulesController : ControllerBase
     {
+        private readonly IModuleService _moduleService;
+        private readonly IPermissionService _permissionService;
         private readonly ILogger<ModulesController> _logger;
 
-        public ModulesController(ILogger<ModulesController> logger)
+        public ModulesController(IModuleService moduleService, IPermissionService permissionService, ILogger<ModulesController> logger)
         {
+            _moduleService = moduleService;
+            _permissionService = permissionService;
             _logger = logger;
         }
 
@@ -28,8 +33,8 @@ namespace TimeControlApi.Controllers
         {
             try
             {
-                // TODO: Implementar servicio de módulos
-                return Ok(new { message = "En desarrollo" });
+                var modules = await _moduleService.GetModulesAsync();
+                return Ok(modules);
             }
             catch (Exception ex)
             {
@@ -42,12 +47,17 @@ namespace TimeControlApi.Controllers
         /// Obtener módulo por ID
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetModule(Guid id)
+        public async Task<IActionResult> GetModule(int id)
         {
             try
             {
-                // TODO: Implementar servicio de módulos
-                return Ok(new { message = "En desarrollo" });
+                var module = await _moduleService.GetModuleByIdAsync(id);
+                if (module == null)
+                {
+                    return NotFound(new { message = "Módulo no encontrado" });
+                }
+
+                return Ok(module);
             }
             catch (Exception ex)
             {
@@ -68,9 +78,31 @@ namespace TimeControlApi.Controllers
                 {
                     return BadRequest(new { message = "Code y Name son requeridos" });
                 }
+                if (request.MenuOrder < 0)
+                {
+                    return BadRequest(new { message = "MenuOrder debe ser mayor o igual a cero" });
+                }
 
-                // TODO: Implementar servicio de módulos
-                return CreatedAtAction(nameof(GetModule), new { id = Guid.NewGuid() }, new { message = "En desarrollo" });
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int? createdBy = null;
+                if (int.TryParse(userIdClaim, out var userId))
+                {
+                    createdBy = userId;
+                }
+
+                var module = await _moduleService.CreateModuleAsync(request, createdBy);
+                await _permissionService.EnsureDefaultModulePrivilegesAsync(module.Id, createdBy);
+                return CreatedAtAction(nameof(GetModule), new { id = module.Id }, new
+                {
+                    module.Id,
+                    module.Code,
+                    module.Name,
+                    module.Description
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -92,10 +124,19 @@ namespace TimeControlApi.Controllers
                     return BadRequest(new { message = "El prompt es requerido" });
                 }
 
-                var currentUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? Guid.Empty.ToString());
-                
-                // TODO: Implementar servicio de generación de módulos con IA
-                return Ok(new { message = "En desarrollo", moduleId = Guid.NewGuid() });
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int? createdBy = null;
+                if (int.TryParse(userIdClaim, out var userId))
+                {
+                    createdBy = userId;
+                }
+
+                var module = await _moduleService.GenerateModuleWithAIAsync(request, createdBy);
+                return Ok(new { message = "Módulo generado exitosamente", moduleId = module.Id });
+            }
+            catch (NotImplementedException ex)
+            {
+                return StatusCode(501, new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -108,12 +149,34 @@ namespace TimeControlApi.Controllers
         /// Actualizar módulo
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateModule(Guid id, [FromBody] UpdateModuleRequest request)
+        public async Task<IActionResult> UpdateModule(int id, [FromBody] UpdateModuleRequest request)
         {
             try
             {
-                // TODO: Implementar servicio de módulos
-                return Ok(new { message = "En desarrollo" });
+                if (request.MenuOrder.HasValue && request.MenuOrder.Value < 0)
+                {
+                    return BadRequest(new { message = "MenuOrder debe ser mayor o igual a cero" });
+                }
+
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int? updatedBy = null;
+                if (int.TryParse(userIdClaim, out var userId))
+                {
+                    updatedBy = userId;
+                }
+
+                var module = await _moduleService.UpdateModuleAsync(id, request, updatedBy);
+                return Ok(new
+                {
+                    module.Id,
+                    module.Code,
+                    module.Name,
+                    module.Description
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -126,12 +189,21 @@ namespace TimeControlApi.Controllers
         /// Eliminar módulo (soft delete)
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteModule(Guid id)
+        public async Task<IActionResult> DeleteModule(int id)
         {
             try
             {
-                // TODO: Implementar servicio de módulos
+                var result = await _moduleService.DeleteModuleAsync(id);
+                if (!result)
+                {
+                    return NotFound(new { message = "Módulo no encontrado" });
+                }
+
                 return Ok(new { message = "Módulo eliminado exitosamente" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -144,12 +216,16 @@ namespace TimeControlApi.Controllers
         /// Obtener permisos de un módulo
         /// </summary>
         [HttpGet("{id}/permissions")]
-        public async Task<IActionResult> GetModulePermissions(Guid id, [FromQuery] bool includeInherited = true, [FromQuery] Guid? userId = null)
+        public async Task<IActionResult> GetModulePermissions(int id, [FromQuery] bool includeInherited = true, [FromQuery] int? userId = null)
         {
             try
             {
-                // TODO: Implementar servicio de permisos
-                return Ok(new { message = "En desarrollo" });
+                var permissions = await _moduleService.GetModulePermissionsAsync(id, includeInherited, userId);
+                return Ok(permissions);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -157,31 +233,6 @@ namespace TimeControlApi.Controllers
                 return StatusCode(500, new { message = "Error interno del servidor" });
             }
         }
-    }
-
-    public class CreateModuleRequest
-    {
-        public string Code { get; set; } = default!;
-        public string Name { get; set; } = default!;
-        public string? Description { get; set; }
-        public string? Icon { get; set; }
-        public int MenuOrder { get; set; } = 0;
-        public Guid? ParentModuleId { get; set; }
-    }
-
-    public class GenerateModuleRequest
-    {
-        public string Prompt { get; set; } = default!;
-        public string AiModel { get; set; } = "gpt-4o";
-    }
-
-    public class UpdateModuleRequest
-    {
-        public string? Name { get; set; }
-        public string? Description { get; set; }
-        public string? Icon { get; set; }
-        public int? MenuOrder { get; set; }
-        public bool? IsEnabled { get; set; }
     }
 }
 

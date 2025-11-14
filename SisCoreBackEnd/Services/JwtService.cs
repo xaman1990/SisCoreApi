@@ -3,9 +3,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using TimeControlApi.Domain.Tenant;
+using SisCoreBackEnd.Domain.Tenant;
 
-namespace TimeControlApi.Services
+namespace SisCoreBackEnd.Services
 {
     public class JwtService : IJwtService
     {

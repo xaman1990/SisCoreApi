@@ -1,4 +1,4 @@
-﻿namespace TimeControlApi.Tenancy
+﻿namespace SisCoreBackEnd.Tenancy
 {
     public class TenantContext
     {

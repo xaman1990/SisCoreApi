@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TimeControlApi.Domain.Tenant;
+using SisCoreBackEnd.Domain.Tenant;
 
-namespace TimeControlApi.Data
+namespace SisCoreBackEnd.Data
 {
     public class TenantDbContext : DbContext
     {
@@ -11,8 +11,12 @@ namespace TimeControlApi.Data
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<UserRole> UserRoles => Set<UserRole>();
         public DbSet<Module> Modules => Set<Module>();
+        public DbSet<SubModule> SubModules => Set<SubModule>();
+        public DbSet<ModulePrivilege> ModulePrivileges => Set<ModulePrivilege>();
         public DbSet<Permission> Permissions => Set<Permission>();
-        public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+        public DbSet<PermissionAssignment> PermissionAssignments => Set<PermissionAssignment>();
+        public DbSet<PermissionGroup> PermissionGroups => Set<PermissionGroup>();
+        public DbSet<PermissionGroupAssignment> PermissionGroupAssignments => Set<PermissionGroupAssignment>();
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<CompanySettings> CompanySettings => Set<CompanySettings>();
         public DbSet<Project> Projects => Set<Project>();
@@ -68,31 +72,98 @@ namespace TimeControlApi.Data
                 e.Property(x => x.Icon).HasMaxLength(100);
             });
 
-            // Permission
-            mb.Entity<Permission>(e =>
+            // SubModule
+            mb.Entity<SubModule>(e =>
             {
+                e.ToTable("SubModules");
                 e.HasIndex(x => new { x.ModuleId, x.Code }).IsUnique();
-                e.Property(x => x.Code).HasMaxLength(100);
+                e.Property(x => x.Code).HasMaxLength(50);
                 e.Property(x => x.Name).HasMaxLength(100);
                 e.Property(x => x.Description).HasMaxLength(500);
                 e.HasOne(x => x.Module)
-                    .WithMany(x => x.Permissions)
+                    .WithMany(x => x.SubModules)
                     .HasForeignKey(x => x.ModuleId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // RolePermission
-            mb.Entity<RolePermission>(e =>
+            // ModulePrivilege
+            mb.Entity<ModulePrivilege>(e =>
             {
-                e.HasKey(k => new { k.RoleId, k.PermissionId });
-                e.HasOne(x => x.Role)
-                    .WithMany(x => x.RolePermissions)
-                    .HasForeignKey(x => x.RoleId)
+                e.ToTable("ModulePrivileges");
+                e.HasIndex(x => new { x.ModuleId, x.PermissionId }).IsUnique();
+                e.Property(x => x.Code).HasMaxLength(100);
+                e.Property(x => x.Name).HasMaxLength(100);
+                e.Property(x => x.Description).HasMaxLength(500);
+                e.HasOne(x => x.Module)
+                    .WithMany(x => x.ModulePrivileges)
+                    .HasForeignKey(x => x.ModuleId)
                     .OnDelete(DeleteBehavior.Cascade);
                 e.HasOne(x => x.Permission)
-                    .WithMany(x => x.RolePermissions)
+                    .WithMany(x => x.ModulePrivileges)
                     .HasForeignKey(x => x.PermissionId)
                     .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(x => x.SubModule)
+                    .WithMany(x => x.ModulePrivileges)
+                    .HasForeignKey(x => x.SubModuleId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // PermissionAssignment
+            mb.Entity<PermissionAssignment>(e =>
+            {
+                e.ToTable("PermissionAssignments");
+                e.HasOne(x => x.ModulePrivilege)
+                    .WithMany(x => x.PermissionAssignments)
+                    .HasForeignKey(x => x.ModulePrivilegeId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(x => x.Role)
+                    .WithMany()
+                    .HasForeignKey(x => x.RoleId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(x => x.User)
+                    .WithMany()
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(x => x.OverrideParent)
+                    .WithMany()
+                    .HasForeignKey(x => x.OverrideParentId)
+                    .OnDelete(DeleteBehavior.SetNull);
+                e.HasIndex(x => new { x.ModulePrivilegeId, x.RoleId, x.UserId });
+            });
+
+            // PermissionGroup
+            mb.Entity<PermissionGroup>(e =>
+            {
+                e.ToTable("PermissionGroups");
+                e.HasIndex(x => x.Code).IsUnique();
+                e.Property(x => x.Code).HasMaxLength(50);
+                e.Property(x => x.Name).HasMaxLength(100);
+                e.Property(x => x.Description).HasMaxLength(500);
+            });
+
+            // PermissionGroupAssignment
+            mb.Entity<PermissionGroupAssignment>(e =>
+            {
+                e.ToTable("PermissionGroupAssignments");
+                e.HasKey(k => new { k.PermissionGroupId, k.ModulePrivilegeId });
+                e.HasOne(x => x.PermissionGroup)
+                    .WithMany(x => x.PermissionGroupAssignments)
+                    .HasForeignKey(x => x.PermissionGroupId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(x => x.ModulePrivilege)
+                    .WithMany()
+                    .HasForeignKey(x => x.ModulePrivilegeId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Permission
+            mb.Entity<Permission>(e =>
+            {
+                e.ToTable("Permissions");
+                e.HasIndex(x => x.Code).IsUnique();
+                e.Property(x => x.Code).HasMaxLength(100);
+                e.Property(x => x.Name).HasMaxLength(100);
+                e.Property(x => x.Description).HasMaxLength(500);
             });
 
             // RefreshToken

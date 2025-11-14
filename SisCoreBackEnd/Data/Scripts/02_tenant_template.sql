@@ -91,31 +91,20 @@ CREATE TABLE IF NOT EXISTS `Modules` (
 
 -- =====================================================
 -- Tabla: Permissions
--- Permisos granulares por módulo y acción
+-- Catálogo global de permisos reutilizables por módulos
 -- =====================================================
 CREATE TABLE IF NOT EXISTS `Permissions` (
     `Id` INT AUTO_INCREMENT PRIMARY KEY,
-    `ModuleId` INT NOT NULL,
-    `Code` VARCHAR(100) NOT NULL COMMENT 'create, read, update, delete, approve, etc.',
+    `Code` VARCHAR(100) NOT NULL UNIQUE,
     `Name` VARCHAR(100) NOT NULL,
     `Description` VARCHAR(500) NULL,
-    UNIQUE KEY `uk_module_code` (`ModuleId`, `Code`),
-    FOREIGN KEY (`ModuleId`) REFERENCES `Modules`(`Id`) ON DELETE CASCADE,
-    INDEX `idx_module_id` (`ModuleId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- =====================================================
--- Tabla: RolePermissions
--- Permisos asignados a cada rol
--- =====================================================
-CREATE TABLE IF NOT EXISTS `RolePermissions` (
-    `RoleId` INT NOT NULL,
-    `PermissionId` INT NOT NULL,
-    `GrantedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `GrantedBy` INT NULL,
-    PRIMARY KEY (`RoleId`, `PermissionId`),
-    FOREIGN KEY (`RoleId`) REFERENCES `Roles`(`Id`) ON DELETE CASCADE,
-    FOREIGN KEY (`PermissionId`) REFERENCES `Permissions`(`Id`) ON DELETE CASCADE
+    `IsSystem` BOOLEAN NOT NULL DEFAULT FALSE,
+    `IsDefaultForModule` BOOLEAN NOT NULL DEFAULT TRUE,
+    `CreatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `CreatedBy` INT NULL,
+    `UpdatedAt` DATETIME NULL,
+    `UpdatedBy` INT NULL,
+    INDEX `idx_permissions_created_at` (`CreatedAt`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================

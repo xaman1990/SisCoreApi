@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TimeControlApi.DTOs.Roles;
-using TimeControlApi.Services;
+using SisCoreBackEnd.DTOs.Roles;
+using SisCoreBackEnd.Services;
 
-namespace TimeControlApi.Controllers
+namespace SisCoreBackEnd.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

@@ -1,4 +1,4 @@
-namespace TimeControlApi.Domain.Master
+namespace SisCoreBackEnd.Domain.Master
 {
     public class MasterUser
     {
