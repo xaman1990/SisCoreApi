@@ -1,5 +1,87 @@
 ---
 alwaysApply: true
 ---
-Each time a driver file is added, modified, or deleted, or a response DTO is modified, the postman_collection.json file must be updated.
-Keep the README.md file updated with any modifications made to the solution.
+
+# Reglas de Proyecto - SisCoreBackEnd
+
+## 1. Documentación y Mantenimiento
+- Cada vez que se agregue, modifique o elimine un controlador o se modifique un DTO de respuesta, se debe actualizar el archivo `TimeControlApi.postman_collection.json`.
+- Mantener el archivo `README.md` actualizado con cualquier modificación realizada en la solución.
+- Todos los endpoints deben tener ejemplos de request y response en Swagger mediante `SwaggerExamplesCatalog.cs`.
+
+## 2. Arquitectura y Estructura
+- Los servicios deben implementar interfaces (patrón `IServiceName`).
+- Los servicios deben usar `TenantDbContextFactory` para obtener el contexto de base de datos, nunca inyectar `TenantDbContext` directamente.
+- Usar `using var db = GetDbContext();` para gestionar el contexto de base de datos en servicios.
+- Los controladores deben ser delgados: solo validación básica, delegar lógica de negocio a servicios.
+- Todos los controladores deben tener el atributo `[ApiController]` y `[Route("api/[controller]")]`.
+
+## 3. Nomenclatura y Convenciones
+- Los métodos asíncronos deben terminar en `Async` (ej: `GetUserAsync`, `CreatePermissionAsync`).
+- Los DTOs de request deben terminar en `Request` (ej: `CreatePermissionRequest`).
+- Los DTOs de response deben terminar en `Response` (ej: `PermissionCatalogResponse`).
+- Los servicios deben estar en el namespace `SisCoreBackEnd.Services` y sus interfaces en el mismo namespace.
+- Los controladores deben estar en `SisCoreBackEnd.Controllers` o subcarpetas según dominio.
+
+## 4. Validación y Manejo de Errores
+- Las validaciones de negocio deben realizarse en los servicios, no solo en los controladores.
+- Usar `InvalidOperationException` para errores de negocio con mensajes descriptivos en español.
+- Los controladores deben capturar excepciones y retornar códigos HTTP apropiados (400, 404, 500).
+- Los mensajes de error deben ser claros y en español.
+- Validar que los códigos normalizados no existan antes de crear entidades (ej: permisos, módulos).
+
+## 5. Normalización de Datos
+- Normalizar códigos a minúsculas usando métodos helper como `NormalizePermissionCode`.
+- Usar `NormalizeOptionalText` para campos opcionales de texto (trim y null si está vacío).
+- Aplicar `.Trim()` a campos de texto antes de guardar.
+
+## 6. Auditoría y Timestamps
+- Todas las entidades que requieran auditoría deben tener: `CreatedAt`, `UpdatedAt`, `CreatedBy`, `UpdatedBy`.
+- Usar `DateTime.UtcNow` para timestamps, nunca `DateTime.Now`.
+- Establecer `CreatedAt` al crear y `UpdatedAt` al modificar.
+
+## 7. Soft Delete
+- Usar el campo `IsDeleted` (boolean) en lugar de eliminación física.
+- Los métodos de eliminación deben ser soft delete por defecto.
+- Las consultas deben filtrar por `!IsDeleted` a menos que se especifique lo contrario.
+
+## 8. Autenticación y Autorización
+- Los endpoints que requieren autenticación deben tener el atributo `[Authorize]`.
+- Los endpoints públicos deben tener `[AllowAnonymous]`.
+- Obtener el ID del usuario actual desde `ClaimTypes.NameIdentifier` en los controladores.
+- Pasar el `userId` o `createdBy`/`updatedBy` a los servicios para auditoría.
+
+## 9. Multi-Tenancy
+- Nunca acceder directamente a `TenantDbContext` desde controladores o servicios.
+- Siempre usar `TenantDbContextFactory` para crear contextos.
+- El middleware de tenant debe ejecutarse antes de la autenticación en el pipeline.
+
+## 10. Consultas a Base de Datos
+- Usar `AsNoTracking()` para consultas de solo lectura cuando no se necesite modificar entidades.
+- Usar `Include()` y `ThenInclude()` para cargar relaciones necesarias de forma explícita.
+- Agrupar consultas relacionadas cuando sea posible para evitar N+1 queries.
+
+## 11. Permisos y Privilegios
+- Cuando se crea un permiso con `IsDefaultForModule = true`, crear automáticamente `ModulePrivilege` para todos los módulos existentes.
+- Los privilegios por defecto deben crearse con `IsDefault = true` y `IsDeleted = false` (activos).
+- Validar que los privilegios no estén asignados antes de eliminarlos permanentemente.
+
+## 12. Respuestas HTTP
+- Usar `CreatedAtAction` para respuestas 201 (creación exitosa).
+- Usar `Ok()` para respuestas 200 (operación exitosa).
+- Usar `NotFound()` para recursos no encontrados (404).
+- Usar `BadRequest()` para errores de validación (400).
+- Usar `StatusCode(500)` para errores internos del servidor.
+
+## 13. Logging
+- Registrar errores usando `_logger.LogError(ex, "Mensaje descriptivo")` en todos los catch blocks.
+- Incluir contexto relevante en los mensajes de log.
+
+## 14. DTOs y Mapeo
+- Crear métodos privados de mapeo en servicios (ej: `MapPermission`, `MapPrivilege`) para convertir entidades a DTOs.
+- Los DTOs deben estar en carpetas organizadas por dominio (ej: `DTOs/Permissions/`, `DTOs/Modules/`).
+
+## 15. Swagger y Documentación
+- Todos los endpoints deben tener comentarios XML `/// <summary>`.
+- Los ejemplos de Swagger deben reflejar datos realistas y coherentes.
+- Mantener los ejemplos actualizados cuando cambien los DTOs.
